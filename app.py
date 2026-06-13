@@ -1,7 +1,7 @@
 import gradio as gr
 from google import genai
 from google.genai import types
-from os
+import os
 
 client = genai.Client(api_key=userdata.get("GEMINI_API_KEY"))
 
