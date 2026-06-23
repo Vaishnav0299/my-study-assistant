@@ -1,22 +1,27 @@
+import os
 import gradio as gr
 from google import genai
 from google.genai import types
-import os
 
-client = genai.Client(api_key=userdata.get("GEMINI_API_KEY"))
+# Fetch the API key securely from Hugging Face Secrets
+api_key = os.environ.get("GEMINI_API_KEY")
+
+if not api_key:
+    raise ValueError("GEMINI_API_KEY is missing! Please add it to your Hugging Face Space Repository Secrets.")
+
+client = genai.Client(api_key=api_key)
 
 personalities = {
-  "Friendly":
-  """You are a friendly, enthusiastic, and highly encouraging Study Assistant. 
-  Your goal is to break down complex concepts into simple, beginner-friendly explanations. 
-  Use analogies and real-world examples that beginners can relate to. 
-  Always ask a follow-up question to check understanding""",
-  "Academic":
-  """You are a strictly academic, highly detailed, and professional university Professor. 
-  Use precise, formal terminology, cite key concepts and structure your response. 
-  Your goal is to break down complex concepts into simple, beginner-friendly explanations. 
-  Use analogies and real-world examples that beginners can relate to. 
-  Always ask a follow-up question to check understanding"""
+    "Friendly": """You are a friendly, enthusiastic, and highly encouraging Study Assistant.   
+Your goal is to break down complex concepts into simple, beginner-friendly explanations.   
+Use analogies and real-world examples that beginners can relate to.   
+Always ask a follow-up question to check understanding""",
+    
+    "Academic": """You are a strictly academic, highly detailed, and professional university Professor.   
+Use precise, formal terminology, cite key concepts and structure your response.   
+Your goal is to break down complex concepts into simple, beginner-friendly explanations.   
+Use analogies and real-world examples that beginners can relate to.   
+Always ask a follow-up question to check understanding"""
 }
 
 def study_assistant(question, persona):
@@ -44,4 +49,5 @@ demo = gr.Interface(
     description="Ask a question and get an answer from your AI study assistant with a chosen personality."
 )
 
-demo.launch(debug=True)
+# Hugging Face handles the server hosting, so launch without debug=True
+demo.launch()
