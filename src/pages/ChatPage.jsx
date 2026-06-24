@@ -150,9 +150,8 @@ export default function ChatPage() {
     } catch (err) {
       updateActiveSessionHistory([
         ...updatedHistory,
-        { role: 'model', content: `⚠️ Error: Could not stream response from Gemini backend. Verify server connection.` }
-      ]);
-    } finally {
+        { role: 'model', content: `⚠️ Error: Could not stream response from AI backend. Verify server connection.` }
+      ]);    } finally {
       setLoading(false);
     }
   };

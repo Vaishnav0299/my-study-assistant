@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useStudy } from '../context/StudyContext';
+import logoImg from '../logo.png';
 import { 
   Sparkles, 
   BookOpen, 
@@ -82,8 +83,8 @@ export default function Layout() {
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <Sparkles className="h-5 w-5 text-white" />
+            <div className="h-10 w-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/20 flex items-center justify-center bg-zinc-950 border border-zinc-200/10">
+              <img src={logoImg} alt="Neural Nexus Logo" className="h-full w-full object-cover" />
             </div>
             <div>
               <h1 className="font-semibold text-lg leading-tight tracking-tight font-sans">Neural Nexus</h1>
@@ -98,7 +99,7 @@ export default function Layout() {
                 : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
             }`}>
               <span className={`h-1.5 w-1.5 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-              <span>{isConnected ? 'Gemini Connected' : 'Local API Mode'}</span>
+              <span>{isConnected ? 'Neural Network Online' : 'Local API Mode'}</span>
             </div>
 
             <button 
@@ -260,7 +261,7 @@ export default function Layout() {
 
             {/* Model Selection */}
             <div className="space-y-2 pt-3 border-t border-zinc-100 dark:border-zinc-800/40">
-              <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-455">Gemini AI Model</label>
+              <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-455">Neural Network Model</label>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { id: 'gemini-2.5-flash', label: '⚡ Quick', desc: 'Fast Responses' },
