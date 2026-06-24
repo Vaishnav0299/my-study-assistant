@@ -6,14 +6,6 @@ from google.genai import types
 # Fetch the API key securely from Hugging Face Secrets or local environment
 api_key = os.environ.get("GEMINI_API_KEY")
 
-if not api_key and os.path.exists(".env"):
-    with open(".env") as f:
-        for line in f:
-            if line.strip() and not line.startswith("#"):
-                parts = line.strip().split("=", 1)
-                if len(parts) == 2 and parts[0].strip() == "GEMINI_API_KEY":
-                    api_key = parts[1].strip().strip('"').strip("'")
-
 # Initialize GenAI Client
 client = None
 if api_key:
