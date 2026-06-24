@@ -1,0 +1,6 @@
+{
+    "python.defaultInterpreterPath": "c:\\Users\\vaish\\Desktop\\study-assistant\\my-study-assistant\\env\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+        "c:\\Users\\vaish\\Desktop\\study-assistant\\my-study-assistant\\env\\Lib\\site-packages"
+    ]
+}
