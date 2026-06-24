@@ -187,12 +187,16 @@ export default function Layout() {
                       {session.title}
                     </button>
                     <button 
-                      onClick={() => deleteSession(session.id)}
-                      className="opacity-60 lg:opacity-0 group-hover:opacity-100 hover:text-rose-500 transition-all p-0.5 rounded-md cursor-pointer"
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteSession(session.id);
+                      }}
+                      className="text-zinc-400 dark:text-zinc-500 hover:text-rose-500 transition-all p-1 rounded-lg cursor-pointer opacity-70 hover:opacity-100 ml-1 flex-shrink-0"
                       title="Delete Session"
                       aria-label={`Delete ${session.title}`}
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 );
