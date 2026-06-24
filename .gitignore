@@ -1,0 +1,12 @@
+# Virtual environment
+env/
+
+# Local configuration / secrets
+.env
+
+# Python build/cache artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
