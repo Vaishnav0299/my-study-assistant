@@ -188,7 +188,7 @@ export default function Layout() {
                     </button>
                     <button 
                       onClick={() => deleteSession(session.id)}
-                      className="opacity-0 group-hover:opacity-150 hover:text-rose-500 transition-all p-0.5 rounded-md"
+                      className="opacity-60 lg:opacity-0 group-hover:opacity-100 hover:text-rose-500 transition-all p-0.5 rounded-md cursor-pointer"
                       title="Delete Session"
                       aria-label={`Delete ${session.title}`}
                     >

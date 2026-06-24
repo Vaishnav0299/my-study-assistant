@@ -212,6 +212,11 @@ export default function ChatPage() {
     setStagedDoc(null);
   };
 
+  const deleteMessage = (msgIdx) => {
+    const updatedHistory = activeSession.history.filter((_, idx) => idx !== msgIdx);
+    updateActiveSessionHistory(updatedHistory);
+  };
+
   const currentRPM = requestTimestamps.filter(t => Date.now() - t < 60000).length;
 
   return (
@@ -382,7 +387,20 @@ export default function ChatPage() {
             {activeSession.history.map((msg, idx) => {
               const isUser = msg.role === 'user';
               return (
-                <div key={idx} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+                <div key={idx} className={`flex ${isUser ? 'justify-end' : 'justify-start'} items-center group space-x-2`}>
+                  
+                  {isUser && (
+                    <button
+                      type="button"
+                      onClick={() => deleteMessage(idx)}
+                      className="opacity-0 group-hover:opacity-100 lg:opacity-0 lg:group-hover:opacity-60 hover:!opacity-100 text-zinc-400 hover:text-rose-500 transition-all p-1.5 rounded-lg cursor-pointer mr-1"
+                      title="Delete message"
+                      aria-label="Delete message"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+
                   <div className={`max-w-[85%] rounded-2xl px-5 py-3.5 text-sm shadow-sm leading-relaxed border ${
                     isUser 
                       ? 'bg-indigo-600 border-indigo-500 text-white shadow-indigo-600/5' 
@@ -421,6 +439,19 @@ export default function ChatPage() {
                       </ReactMarkdown>
                     )}
                   </div>
+
+                  {!isUser && (
+                    <button
+                      type="button"
+                      onClick={() => deleteMessage(idx)}
+                      className="opacity-0 group-hover:opacity-100 lg:opacity-0 lg:group-hover:opacity-60 hover:!opacity-100 text-zinc-400 hover:text-rose-500 transition-all p-1.5 rounded-lg cursor-pointer ml-1"
+                      title="Delete message"
+                      aria-label="Delete message"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+
                 </div>
               );
             })}
