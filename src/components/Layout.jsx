@@ -88,7 +88,7 @@ export default function Layout() {
             </div>
             <div>
               <h1 className="font-semibold text-lg leading-tight tracking-tight font-sans">Neural Nexus</h1>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 hidden sm:block">Designed and Developed by Vaishnav Gaware</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 hidden sm:block">Premium AI-Powered Learning Companion</p>
             </div>
           </div>
           
