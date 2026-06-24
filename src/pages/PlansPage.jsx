@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Sparkles, RefreshCw, ChevronRight } from 'lucide-react';
+import { Calendar, Sparkles, RefreshCw, ChevronRight, Download } from 'lucide-react';
 import { useStudy } from '../context/StudyContext';
 
 export default function PlansPage() {
@@ -128,10 +128,21 @@ Do not wrap the output in markdown code blocks like \`\`\`json. Return only the 
         {schedule.length > 0 && (
           <div className="max-w-2xl mx-auto space-y-6">
             
-            <div className="border-t border-zinc-100 dark:border-zinc-850 pt-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-550 mb-6">
-                📅 Timetable Roadmap: {topic} ({days} Days)
-              </h4>
+            <div id="print-area" className="border-t border-zinc-100 dark:border-zinc-850 pt-6">
+              <div className="flex items-center justify-between mb-6">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-550">
+                  📅 Timetable Roadmap: {topic} ({days} Days)
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all flex items-center space-x-1.5"
+                  title="Download study plan as PDF"
+                >
+                  <Download className="h-3.5 w-3.5 text-indigo-500" />
+                  <span>Download PDF</span>
+                </button>
+              </div>
               
               <div className="relative pl-6 border-l-2 border-zinc-200 dark:border-zinc-800 space-y-6">
                 {schedule.map((item, idx) => (

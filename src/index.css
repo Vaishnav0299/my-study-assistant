@@ -56,3 +56,45 @@ body {
 .animate-pulse-glow {
   animation: pulseGlow 4s infinite ease-in-out;
 }
+
+/* Printing styles for PDF downloads */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Hide all elements on the page */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Render only the print-area element and its children */
+  #print-area, #print-area * {
+    visibility: visible;
+  }
+  
+  /* Position the print-area to cover the entire page */
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none !important;
+  }
+  
+  /* Reset dark-mode properties for light-colored print output */
+  .dark #print-area * {
+    background: transparent !important;
+    color: black !important;
+    border-color: #e4e4e7 !important; /* Tailwind zinc-200 */
+  }
+  
+  /* Hide buttons during print */
+  #print-area button,
+  #print-area button * {
+    display: none !important;
+  }
+}
