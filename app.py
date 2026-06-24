@@ -35,14 +35,6 @@ Instead, you guide the student to the answer themselves by asking helpful, thoug
 Encourage critical thinking and self-discovery. Keep your responses relatively short, engaging, and highly interactive."""
 }
 
-# Pre-defined study cards (icon, title, desc, prompt)
-QUICK_TOPICS = [
-    {"icon": "🌌", "title": "Quantum Physics", "desc": "Explain it simply", "prompt": "Can you explain quantum physics in simple terms with an analogy?"},
-    {"icon": "🧬", "title": "Photosynthesis", "desc": "Summarize the process", "prompt": "Could you break down the process of photosynthesis step-by-step?"},
-    {"icon": "📊", "title": "Bayes' Theorem", "desc": "Explain with analogy", "prompt": "Can you explain Bayes' Theorem using a simple real-world scenario?"},
-    {"icon": "⚔️", "title": "French Revolution", "desc": "Causes & summary", "prompt": "What were the primary causes of the French Revolution? Give a brief summary."}
-]
-
 def study_assistant_chat(message, history, persona, custom_key=None):
     global client
     # Resolve API Key
@@ -84,251 +76,457 @@ def study_assistant_chat(message, history, persona, custom_key=None):
     except Exception as e:
         return f"⚠️ API Error: {str(e)}\n(Please ensure your API Key is valid and has access to gemini-2.5-flash)"
 
-# Custom CSS for premium Glassmorphism Dark Theme
+# Custom CSS for SaaS-grade visual style
 custom_css = """
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
 
-/* Apply modern Outfit font */
+/* Font application */
 body, .gradio-container, .gr-button, .gr-text-input, .gr-markdown {
-    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* Base body styles & dark background */
+/* Background system */
 body, .gradio-container {
-    background: radial-gradient(circle at 50% 0%, #171730 0%, #07070d 100%) !important;
-    color: #e2e8f0 !important;
+    background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 50%, #05070f 100%) !important;
+    color: #f9fafb !important;
 }
 
-/* Container limits */
-.gradio-container {
-    max-width: 1200px !important;
-    margin: 0 auto !important;
-    padding: 20px !important;
-}
-
-/* Custom modern header styling */
+/* Header container styling */
 .header-container {
-    text-align: center;
-    padding: 2.5rem 1.5rem;
-    background: linear-gradient(180deg, rgba(99, 102, 241, 0.12) 0%, rgba(99, 102, 241, 0) 100%);
-    border-radius: 24px;
-    margin-bottom: 2rem;
-    border: 1px solid rgba(99, 102, 241, 0.15);
-    box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: rgba(17, 24, 39, 0.6) !important;
+    backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid #1f2937 !important;
+    border-radius: 16px !important;
+    margin-bottom: 1.5rem !important;
 }
 
-.header-title {
-    font-size: 2.5rem !important;
+.header-title-section h1 {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 2.2rem !important;
     font-weight: 800 !important;
-    background: linear-gradient(135deg, #e0e7ff 0%, #c084fc 50%, #6366f1 100%);
+    background: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #8b5cf6 100%);
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
-    letter-spacing: -0.02em;
     margin: 0 !important;
-    padding-bottom: 5px;
+    text-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
 }
 
-.header-subtitle {
-    font-size: 1.05rem !important;
-    color: #94a3b8 !important;
-    margin-top: 6px !important;
-    font-weight: 400;
+.header-title-section p {
+    font-size: 0.95rem !important;
+    color: rgba(249, 250, 251, 0.7) !important;
+    margin: 4px 0 0 0 !important;
 }
 
-/* Glassmorphic Cards & Panels */
-.glass-panel {
-    background: rgba(15, 23, 42, 0.45) !important;
+/* Status Indicator */
+.status-indicator {
+    background: rgba(16, 185, 129, 0.1) !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    color: #10b981 !important;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+/* Glassmorphic Side & Main panels */
+.sidebar-panel {
+    background: rgba(17, 24, 39, 0.75) !important;
     backdrop-filter: blur(16px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 18px !important;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7) !important;
-    padding: 20px !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #1f2937 !important;
+    border-radius: 20px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
 }
 
-.glass-panel:hover {
-    border-color: rgba(99, 102, 241, 0.3) !important;
-    box-shadow: 0 12px 40px -8px rgba(99, 102, 241, 0.12) !important;
+.main-chat-panel {
+    background: rgba(17, 24, 39, 0.5) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid #1f2937 !important;
+    border-radius: 20px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Styling the title headers in the columns */
+/* Section titles */
 .section-title {
-    font-size: 1.2rem !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 1.1rem !important;
     font-weight: 700 !important;
-    color: #f8fafc !important;
-    margin-bottom: 15px !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    padding-bottom: 8px;
+    color: #f9fafb !important;
+    margin-bottom: 1rem !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* Quick Topic Prompt Cards */
-.topic-card {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+/* Learning Stats styling */
+.stats-card {
+    background: rgba(31, 41, 55, 0.4) !important;
+    border: 1px solid #1f2937 !important;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    margin-top: 10px !important;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stats-row:last-child {
+    border-bottom: none;
+}
+
+.stats-label {
+    color: #9ca3af !important;
+    font-size: 0.85rem !important;
+}
+
+.stats-value {
+    color: #f9fafb !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+}
+
+/* Quick Action Prompt Cards */
+.quick-action-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.quick-card {
+    background: rgba(17, 24, 39, 0.8) !important;
+    border: 1px solid #1f2937 !important;
     border-radius: 12px !important;
     padding: 12px !important;
     cursor: pointer !important;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    white-space: pre-line !important;
+    transition: all 0.2s ease !important;
     text-align: left !important;
     height: auto !important;
-    min-height: 70px !important;
+    display: block !important;
 }
 
-.topic-card:hover {
-    background: rgba(99, 102, 241, 0.08) !important;
-    border-color: rgba(99, 102, 241, 0.4) !important;
+.quick-card:hover {
+    border-color: #8b5cf6 !important;
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.18) !important;
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15) !important;
+    background: rgba(139, 92, 246, 0.05) !important;
 }
 
-/* Button override styling */
-.primary-btn {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+/* Chat Input Section */
+.input-row {
+    display: flex !important;
+    gap: 8px !important;
+    align-items: center !important;
+}
+
+.send-btn {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%) !important;
     border: none !important;
     color: white !important;
-    font-weight: 600 !important;
+    font-weight: bold !important;
+    font-size: 1.2rem !important;
     border-radius: 12px !important;
-    padding: 10px 20px !important;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35) !important;
+    max-height: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     transition: all 0.2s ease !important;
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4) !important;
 }
 
-.primary-btn:hover {
+.send-btn:hover {
     transform: translateY(-1px) !important;
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5) !important;
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6) !important;
 }
 
-.secondary-btn {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    color: #e2e8f0 !important;
-    font-weight: 500 !important;
-    border-radius: 12px !important;
+.tool-btn {
+    background: rgba(31, 41, 55, 0.5) !important;
+    border: 1px solid #1f2937 !important;
+    color: #d1d5db !important;
+    border-radius: 10px !important;
+    font-size: 0.8rem !important;
+    padding: 6px 12px !important;
     transition: all 0.2s ease !important;
 }
 
-.secondary-btn:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
+.tool-btn:hover {
+    background: rgba(31, 41, 55, 0.8) !important;
+    border-color: #4b5563 !important;
+    color: #ffffff !important;
 }
 
-/* Chatbot interface elements */
+/* Chatbot styling overrides */
 .chatbot-container {
     border-radius: 16px !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    background: rgba(15, 23, 42, 0.25) !important;
+    border: 1px solid #1f2937 !important;
+    background: #0b0f19 !important;
 }
 
-/* Custom adjustments for inputs */
-textarea, input[type="text"] {
-    background: rgba(15, 23, 42, 0.6) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 12px !important;
-    color: #f8fafc !important;
+/* Empty placeholder styling */
+.welcome-container {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    max-width: 500px;
+    margin: 2rem auto;
 }
 
-textarea:focus, input[type="text"]:focus {
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+.welcome-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-title {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.welcome-desc {
+    color: #9ca3af !important;
+    font-size: 0.95rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.welcome-suggestion-box {
+    background: rgba(31, 41, 55, 0.3);
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: left;
+}
+
+.welcome-suggestion-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #a78bfa;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.welcome-suggestion-item {
+    font-size: 0.85rem;
+    color: #d1d5db;
+    margin: 6px 0;
 }
 """
 
+chatbot_placeholder = """
+<div class="welcome-container">
+    <div class="welcome-icon">🤖</div>
+    <div class="welcome-title">Welcome to StudySphere AI</div>
+    <p class="welcome-desc">Your premium AI-powered learning companion. Ask questions, generate study summaries, solve homework, or test your skills.</p>
+    <div class="welcome-suggestion-box">
+        <div class="welcome-suggestion-title">💡 How to start:</div>
+        <div class="welcome-suggestion-item">👉 Choose an <b>Assistant Personality</b> in the sidebar</div>
+        <div class="welcome-suggestion-item">👉 Click a <b>Quick Action</b> card below to populate the editor</div>
+        <div class="welcome-suggestion-item">👉 Ask a question directly or drop text/files using the attachment tool</div>
+    </div>
+</div>
+"""
+
+def load_file_content(file):
+    if file is None:
+        return ""
+    try:
+        # file.name holds the temporary file path
+        filepath = file.name
+        ext = os.path.splitext(filepath)[1].lower()
+        if ext in [".txt", ".md", ".py", ".json", ".csv"]:
+            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+            return f"\n\n[Uploaded Notes / File Content ({os.path.basename(filepath)}):\n{content[:5000]}]"
+        else:
+            return f"\n\n[Uploaded File: {os.path.basename(filepath)} (Note: Only text files like txt, md, py, csv are parsed in this study assistant prototype)]"
+    except Exception as e:
+        return f"\n\n[Error reading file: {str(e)}]"
+
+def render_stats_html(stats):
+    return f"""
+    <div class="stats-card">
+        <div class="stats-row">
+            <span class="stats-label">Questions Asked</span>
+            <span class="stats-value">{stats["questions_asked"]}</span>
+        </div>
+        <div class="stats-row">
+            <span class="stats-label">Topics Learned</span>
+            <span class="stats-value">{stats["topics_learned"]}</span>
+        </div>
+        <div class="stats-row">
+            <span class="stats-label">Estimated Study Time</span>
+            <span class="stats-value">{stats["questions_asked"] * 0.1:.1f} hrs</span>
+        </div>
+    </div>
+    """
+
+def get_connection_status(key_input):
+    active_key = api_key or (key_input.strip() if key_input else None)
+    if active_key:
+        return """<div class="status-indicator">🟢 Gemini Connected</div>"""
+    else:
+        return """<div class="status-indicator" style="background: rgba(245, 158, 11, 0.1) !important; border-color: rgba(245, 158, 11, 0.3) !important; color: #f59e0b !important;">🟡 Local API Mode</div>"""
+
 with gr.Blocks() as demo:
     
-    # Header Panel
+    # States for Learning Stats
+    stats_state = gr.State(value={"questions_asked": 0, "topics_learned": 0})
+    
+    # Header Layout
     with gr.Row(elem_classes=["header-container"]):
-        with gr.Column():
-            gr.HTML("<h1>🧠 StudySphere AI</h1>", elem_classes=["header-title"])
-            gr.HTML("<p>Your premium Gemini-powered personal study assistant. Ask anything, prep for tests, and learn at your own pace.</p>", elem_classes=["header-subtitle"])
+        with gr.Column(scale=3):
+            gr.HTML("""
+            <div class="header-title-section">
+                <h1>StudySphere AI</h1>
+                <p>Your AI-powered learning companion. Ask questions, generate summaries, and study smarter.</p>
+            </div>
+            """)
+        with gr.Column(scale=1):
+            status_indicator = gr.HTML(value=get_connection_status(""))
             
+    # Main grid
     with gr.Row(equal_height=True):
         
-        # Left Panel (Controls and Quick Topics)
-        with gr.Column(scale=1, elem_classes=["glass-panel"]):
+        # Left Panel (Sidebar - 25% scale=1)
+        with gr.Column(scale=1, min_width=280, elem_classes=["sidebar-panel"]):
+            
+            # Nav Menu Header
+            gr.HTML("<h3>🏠 Platform Menu</h3>", elem_classes=["section-title"])
+            
+            # Static indicators for visual SaaS navigation
+            gr.Radio(
+                choices=["🏠 Dashboard & Chat", "🧠 Quiz Generator", "📄 My Documents", "📚 Study Plans"],
+                value="🏠 Dashboard & Chat",
+                label="Navigation View",
+                interactive=True
+            )
+            
+            gr.HTML("<div style='height: 15px;'></div>")
+            
+            # Learning Stats
+            gr.HTML("<h3>📈 Today's Learning Stats</h3>", elem_classes=["section-title"])
+            stats_display = gr.HTML(value=render_stats_html({"questions_asked": 0, "topics_learned": 0}))
+            
+            gr.HTML("<div style='height: 15px;'></div>")
+            
+            # Sidebar controls & settings
             gr.HTML("<h3>⚙️ Study Settings</h3>", elem_classes=["section-title"])
             
-            # API Key settings accordion (helps with local execution when environment variable is not present)
-            with gr.Accordion("🔑 Custom API Key (Optional)", open=not api_key):
-                gr.HTML("<p style='font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px;'>If GEMINI_API_KEY is not set in your environment, enter it below. It will only be used locally.</p>")
-                custom_key = gr.Textbox(
-                    label="Gemini API Key", 
-                    placeholder="AIzaSy...", 
-                    type="password",
-                    value=""
-                )
-            
-            gr.HTML("<div style='height: 10px;'></div>")
-            
-            # Personality selector
+            # Personality selection
             persona = gr.Radio(
                 choices=list(personalities.keys()),
                 value="✨ Friendly Guide",
                 label="Assistant Personality",
             )
             
-            gr.HTML("<div style='height: 20px;'></div>")
-            gr.HTML("<h3>🌌 Quick-Start Topics</h3>", elem_classes=["section-title"])
-            gr.HTML("<p style='font-size: 0.8rem; color: #94a3b8; margin-bottom: 12px;'>Click a topic to auto-fill the question input box below:</p>")
-            
-            topic_buttons = []
-            with gr.Row():
-                for topic in QUICK_TOPICS:
-                    btn = gr.Button(
-                        value=f"{topic['icon']} {topic['title']}\n{topic['desc']}", 
-                        elem_classes=["topic-card"]
-                    )
-                    topic_buttons.append((btn, topic["prompt"]))
-                    
-        # Right Panel (Chat workspace)
-        with gr.Column(scale=2, elem_classes=["glass-panel"]):
-            gr.HTML("<h3>💬 Study Space</h3>", elem_classes=["section-title"])
-            
-            # Chat history
-            chatbot = gr.Chatbot(
-                label="Study Conversation",
-                elem_classes=["chatbot-container"],
-                height=450
-            )
-            
-            # Input row
-            with gr.Row(elem_classes=["chat-row"]):
-                question_input = gr.Textbox(
-                    placeholder="Ask your question here... (e.g. Explain how gravity works)",
-                    label="Your Question",
-                    lines=2,
-                    scale=4
+            # Custom API Key setup
+            with gr.Accordion("🔑 Custom API Key (Optional)", open=not api_key):
+                custom_key = gr.Textbox(
+                    label="Gemini API Key", 
+                    placeholder="AIzaSy...", 
+                    type="password",
+                    value=""
                 )
                 
+            # Wire status indicator to key changes
+            custom_key.change(fn=get_connection_status, inputs=custom_key, outputs=status_indicator)
+            
+        # Right Panel (Chat workspace - 75% scale=3)
+        with gr.Column(scale=3, elem_classes=["main-chat-panel"]):
+            gr.HTML("<h3>💬 Study Space</h3>", elem_classes=["section-title"])
+            
+            # Conversation chatbot window
+            chatbot = gr.Chatbot(
+                label="Study Session",
+                elem_classes=["chatbot-container"],
+                height=450,
+                placeholder=chatbot_placeholder
+            )
+            
+            # Quick Action Cards
+            gr.HTML("<h3>⚡ Quick Actions</h3>", elem_classes=["section-title"])
+            with gr.Row(elem_classes=["quick-action-grid"]):
+                summarize_btn = gr.Button("📘 Summarize Notes\nList core concepts", elem_classes=["quick-card"])
+                quiz_btn = gr.Button("🧠 Quiz Me\nAsk 3 conceptual Qs", elem_classes=["quick-card"])
+                mcq_btn = gr.Button("📝 Generate MCQs\nBuild multi-choice test", elem_classes=["quick-card"])
+                explain_btn = gr.Button("📊 Explain Concepts\nSocratic breakdown", elem_classes=["quick-card"])
+                
+            # Main prompt input box
+            with gr.Row(elem_classes=["input-row"]):
+                question_input = gr.Textbox(
+                    placeholder="Ask anything about your studies... (e.g. Break down Bayes' theorem with an analogy)",
+                    label="Your Study Query",
+                    lines=2,
+                    scale=9
+                )
+                submit_btn = gr.Button("➤", elem_classes=["send-btn"], scale=1)
+                
+            # Attachment and secondary tools
             with gr.Row():
-                submit_btn = gr.Button("Submit", elem_classes=["primary-btn"], scale=1)
-                clear_btn = gr.Button("Clear Chat", elem_classes=["secondary-btn"], scale=1)
-                
-            # Wire topic card clicks to set the question input
-            for btn, prompt_val in topic_buttons:
-                btn.click(fn=lambda p=prompt_val: p, outputs=question_input)
-                
-    # Helper functions for the chatbot flow
-    def user_submit(message, history):
-        if not message.strip():
-            return "", history
-        # Return empty message box and append user message to chat history
-        # In Gradio 6, chatbot expects list of ChatMessage or list of dicts.
-        new_history = history + [{"role": "user", "content": message}]
-        return "", new_history
+                with gr.Column(scale=3):
+                    file_input = gr.File(
+                        label="📎 Attach Notes (txt, md, csv, py)", 
+                        file_count="single",
+                        file_types=[".txt", ".md", ".py", ".json", ".csv"],
+                        scale=1
+                    )
+                with gr.Column(scale=1):
+                    gr.HTML("<div style='height: 10px;'></div>")
+                    clear_btn = gr.Button("🧹 Clear Chat", elem_classes=["tool-btn"])
+                    
+            # Wire quick action card clicks
+            summarize_btn.click(
+                fn=lambda: "Summarize my notes on the following topic and list key terms: ", 
+                outputs=question_input
+            )
+            quiz_btn.click(
+                fn=lambda: "Quiz me on this topic by asking me 3 conceptual questions: ", 
+                outputs=question_input
+            )
+            mcq_btn.click(
+                fn=lambda: "Generate 3 multiple choice questions (MCQs) to test my knowledge on: ", 
+                outputs=question_input
+            )
+            explain_btn.click(
+                fn=lambda: "Break down the core concepts of this topic using a Socratic teaching style: ", 
+                outputs=question_input
+            )
 
-    def bot_respond(history, selected_persona, key_input):
-        if not history or history[-1].get("role") != "user":
-            return history
+    # Core logic flow
+    def user_submit(message, file, history):
+        if not message.strip() and not file:
+            return "", None, history
+            
+        file_content = load_file_content(file)
+        full_message = message + file_content
         
+        new_history = history + [{"role": "user", "content": full_message}]
+        return "", None, new_history
+
+    def bot_respond(history, selected_persona, key_input, stats):
+        if not history or history[-1].get("role") != "user":
+            return history, stats, render_stats_html(stats)
+            
         user_message = history[-1].get("content")
-        # Convert previous history to list of tuples for API context formatter
         formatted_history = []
         user_msg_temp = None
         
-        # Iterate over all messages except the very last user message
+        # Parse history list for api query
         for msg in history[:-1]:
-            # Handle list of dicts or list of objects
             role = msg.role if hasattr(msg, "role") else msg.get("role")
             content = msg.content if hasattr(msg, "content") else msg.get("content")
             
@@ -338,38 +536,52 @@ with gr.Blocks() as demo:
                 formatted_history.append((user_msg_temp, content))
                 user_msg_temp = None
                 
-        # Generate response
+        # Query API
         bot_response = study_assistant_chat(user_message, formatted_history, selected_persona, key_input)
         
         history.append({"role": "model", "content": bot_response})
-        return history
+        
+        # Update dynamic stats counters
+        new_stats = {
+            "questions_asked": stats["questions_asked"] + 1,
+            "topics_learned": stats["topics_learned"] + (1 if len(user_message) > 15 else 0)
+        }
+        
+        return history, new_stats, render_stats_html(new_stats)
 
-    # Wire the submit actions
+    # Wire event flows
     submit_btn.click(
         fn=user_submit,
-        inputs=[question_input, chatbot],
-        outputs=[question_input, chatbot],
+        inputs=[question_input, file_input, chatbot],
+        outputs=[question_input, file_input, chatbot],
         queue=True
     ).then(
         fn=bot_respond,
-        inputs=[chatbot, persona, custom_key],
-        outputs=[chatbot]
+        inputs=[chatbot, persona, custom_key, stats_state],
+        outputs=[chatbot, stats_state, stats_display]
     )
 
     question_input.submit(
         fn=user_submit,
-        inputs=[question_input, chatbot],
-        outputs=[question_input, chatbot],
+        inputs=[question_input, file_input, chatbot],
+        outputs=[question_input, file_input, chatbot],
         queue=True
     ).then(
         fn=bot_respond,
-        inputs=[chatbot, persona, custom_key],
-        outputs=[chatbot]
+        inputs=[chatbot, persona, custom_key, stats_state],
+        outputs=[chatbot, stats_state, stats_display]
     )
 
-    clear_btn.click(fn=lambda: ([], ""), outputs=[chatbot, question_input])
+    # Reset chat & stats
+    def reset_workspace():
+        initial_stats = {"questions_asked": 0, "topics_learned": 0}
+        return [], "", None, initial_stats, render_stats_html(initial_stats)
 
-# Hugging Face Spaces launch
+    clear_btn.click(
+        fn=reset_workspace, 
+        outputs=[chatbot, question_input, file_input, stats_state, stats_display]
+    )
+
 if __name__ == "__main__":
     demo.launch(
         css=custom_css, 
