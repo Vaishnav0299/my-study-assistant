@@ -1,6 +1,4 @@
 ---
-#Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
-
 # Neural Nexus - Premium AI-Powered Study Assistant
 
 Neural Nexus is a modern, high-performance study companion application featuring a React-based frontend and a FastAPI Python backend powered by the Gemini 2.5 Flash model.
@@ -11,7 +9,7 @@ Neural Nexus is a modern, high-performance study companion application featuring
 
 Neural Nexus combines a fast asynchronous Python API with a highly responsive React client. The application flows as follows:
 
-```mermaid
+```
 graph TD
     Client[React Frontend / Vite] -->|1. Request /api/chat| Server[FastAPI Backend]
     Server -->|2. Reads env| Dotenv[.env file / Secrets]
