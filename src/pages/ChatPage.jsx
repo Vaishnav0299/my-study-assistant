@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStudy } from '../context/StudyContext';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import logoImg from '../logo.png';
 import { 
   Send, 
   Trash2, 
@@ -381,8 +382,8 @@ export default function ChatPage() {
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {(!activeSession?.history || activeSession.history.length === 0) ? (
           <div className="max-w-2xl mx-auto text-center py-10 px-4 space-y-6">
-            <div className="h-16 w-16 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto shadow-md">
-              <Sparkles className="h-8 w-8 text-white" />
+            <div className="h-20 w-20 rounded-2xl overflow-hidden flex items-center justify-center mx-auto shadow-md border border-zinc-150/10 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+              <img src={logoImg} alt="Neural Nexus Logo" className="h-full w-full object-cover" />
             </div>
             <div className="space-y-2">
               <h2 className="text-xl font-bold tracking-tight text-zinc-850 dark:text-zinc-150">Start Learning with Neural Nexus</h2>
