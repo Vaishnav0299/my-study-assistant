@@ -21,6 +21,21 @@ const PERSONALITIES = {
   "🤔 Socratic Tutor": "Guides you to answers via hints and thought-provoking questions."
 };
 
+const MODEL_LIMITS = {
+  'gemini-2.5-flash': {
+    rpm: 15,
+    rpd: 1500,
+    tpm: 1000000,
+    tpmLabel: '1M'
+  },
+  'gemini-2.5-pro': {
+    rpm: 2,
+    rpd: 50,
+    tpm: 32000,
+    tpmLabel: '32k'
+  }
+};
+
 const QUICK_ACTIONS = [
   { label: "📘 Summarize Notes", prompt: "Summarize my notes on the following topic and list key terms: " },
   { label: "🧠 Quiz Me", prompt: "Quiz me on this topic by asking me 3 conceptual questions: " },
@@ -171,6 +186,8 @@ export default function ChatPage() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let streamText = '';
+      let hasError = false;
+      let friendlyError = '';
 
       while (true) {
         const { done, value } = await reader.read();
@@ -179,10 +196,20 @@ export default function ChatPage() {
         const chunk = decoder.decode(value);
         streamText += chunk;
 
+        if (streamText.includes('⚠️ Stream API Error:') || streamText.includes('RESOURCE_EXHAUSTED')) {
+          hasError = true;
+          const lowerText = streamText.toLowerCase();
+          if (lowerText.includes('429') || lowerText.includes('resource_exhausted') || lowerText.includes('quota') || lowerText.includes('limit')) {
+            friendlyError = `⚠️ **Neural Network Rate Limit Exceeded**. The active **Thinking (Pro)** model has a free-tier limit of **2 requests per minute** and **50 requests per day**. Please wait a minute before retrying, or toggle to the **Quick (Flash)** model in the **Study Settings** menu at the top of the chat area for higher limits (15 RPM / 1500 RPD).`;
+          } else {
+            friendlyError = `⚠️ **API Error**: The server returned an error while communicating with the AI core: ${streamText.replace('⚠️ Stream API Error:', '').trim()}`;
+          }
+        }
+
         // Update bot message content in real time
         updateActiveSessionHistory([
           ...updatedHistory,
-          { role: 'model', content: streamText }
+          { role: 'model', content: hasError ? friendlyError : streamText }
         ]);
       }
 
@@ -567,12 +594,12 @@ export default function ChatPage() {
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
             <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Request Rate (RPM)</span>
-            <span className="font-bold text-indigo-500">{currentRPM} / 15 RPM</span>
+            <span className="font-bold text-indigo-500">{currentRPM} / {limits.rpm} RPM</span>
           </div>
           <div className="w-full bg-zinc-100 dark:bg-zinc-850 h-2 rounded-full overflow-hidden">
             <div 
               className="bg-indigo-500 h-full transition-all duration-500" 
-              style={{ width: `${Math.min((currentRPM / 15) * 100, 100)}%` }}
+              style={{ width: `${Math.min((currentRPM / limits.rpm) * 100, 100)}%` }}
             ></div>
           </div>
           <span className="text-[9px] text-zinc-400 dark:text-zinc-500 block">
@@ -584,12 +611,12 @@ export default function ChatPage() {
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
             <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Daily Requests (RPD)</span>
-            <span className="font-bold text-emerald-550">{stats.questionsAsked} / 1,500 RPD</span>
+            <span className="font-bold text-emerald-550">{stats.questionsAsked} / {limits.rpd.toLocaleString()} RPD</span>
           </div>
           <div className="w-full bg-zinc-100 dark:bg-zinc-850 h-2 rounded-full overflow-hidden">
             <div 
               className="bg-emerald-500 h-full transition-all duration-500" 
-              style={{ width: `${Math.min((stats.questionsAsked / 1500) * 100, 100)}%` }}
+              style={{ width: `${Math.min((stats.questionsAsked / limits.rpd) * 100, 100)}%` }}
             ></div>
           </div>
           <span className="text-[9px] text-zinc-400 dark:text-zinc-500 block">
@@ -601,12 +628,12 @@ export default function ChatPage() {
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
             <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Token Bandwidth (TPM)</span>
-            <span className="font-bold text-amber-500">~{currentRPM * 1500} / 1M TPM</span>
+            <span className="font-bold text-amber-500">~{currentRPM * 1500} / {limits.tpmLabel} TPM</span>
           </div>
           <div className="w-full bg-zinc-100 dark:bg-zinc-850 h-2 rounded-full overflow-hidden">
             <div 
               className="bg-amber-500 h-full transition-all duration-500" 
-              style={{ width: `${Math.min(((currentRPM * 1500) / 1000000) * 100, 100)}%` }}
+              style={{ width: `${Math.min(((currentRPM * 1500) / limits.tpm) * 100, 100)}%` }}
             ></div>
           </div>
           <span className="text-[9px] text-zinc-400 dark:text-zinc-500 block">
