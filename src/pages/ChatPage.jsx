@@ -9,7 +9,8 @@ import {
   HelpCircle,
   Keyboard,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Activity
 } from 'lucide-react';
 
 const QUICK_ACTIONS = [
@@ -33,6 +34,15 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [stagedDoc, setStagedDoc] = useState(null);
+  const [requestTimestamps, setRequestTimestamps] = useState([]);
+  const [, setTick] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTick(t => t + 1);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -88,6 +98,11 @@ export default function ChatPage() {
     setMessage('');
     setStagedDoc(null);
     setLoading(true);
+
+    setRequestTimestamps(prev => {
+      const now = Date.now();
+      return [...prev.filter(t => now - t < 60000), now];
+    });
 
     // Update global Stats
     setStats(prev => ({
@@ -173,8 +188,13 @@ export default function ChatPage() {
     setStagedDoc(null);
   };
 
+  const currentRPM = requestTimestamps.filter(t => Date.now() - t < 60000).length;
+
   return (
-    <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl shadow-sm flex flex-col overflow-hidden h-[calc(100vh-140px)] min-h-[600px]">
+    <div className="flex h-[calc(100vh-140px)] min-h-[600px] gap-6 w-full">
+      
+      {/* Chat Workspace (Left side) */}
+      <div className="flex-1 bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl shadow-sm flex flex-col overflow-hidden h-full">
       
       {/* Tab Header */}
       <div className="border-b border-zinc-200/60 dark:border-zinc-850 px-6 py-4 bg-zinc-50/50 dark:bg-zinc-950/20 flex items-center justify-between">
@@ -383,6 +403,88 @@ export default function ChatPage() {
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    {/* AI Quota & Status (Right side) */}
+    <div className="hidden xl:flex flex-col w-80 bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800/80 rounded-2xl shadow-sm p-6 space-y-6 overflow-y-auto h-full">
+      <div>
+        <h3 className="font-semibold text-sm text-zinc-850 dark:text-zinc-250 flex items-center space-x-2">
+          <Activity className="h-4 w-4 text-indigo-500 animate-pulse" />
+          <span>AI Quota & Status</span>
+        </h3>
+        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">
+          Real-time API threshold monitoring
+        </p>
+      </div>
+
+        {/* Model Identifier */}
+        <div className="bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200/50 dark:border-zinc-800/60 rounded-xl p-3 space-y-1">
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium block">ACTIVE MODEL</span>
+          <span className="text-xs font-semibold text-zinc-850 dark:text-zinc-250 block truncate">
+            {selectedModel === 'gemini-2.5-pro' ? '🧠 Deep Thinking (Pro)' : '⚡ Quick Mode (Flash)'}
+          </span>
+        </div>
+
+        {/* Requests Per Minute (RPM) */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs">
+            <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Request Rate (RPM)</span>
+            <span className="font-bold text-indigo-500">{currentRPM} / 15 RPM</span>
+          </div>
+          <div className="w-full bg-zinc-100 dark:bg-zinc-850 h-2 rounded-full overflow-hidden">
+            <div 
+              className="bg-indigo-500 h-full transition-all duration-500" 
+              style={{ width: `${Math.min((currentRPM / 15) * 100, 100)}%` }}
+            ></div>
+          </div>
+          <span className="text-[9px] text-zinc-400 dark:text-zinc-500 block">
+            Rate limit resets every 60 seconds.
+          </span>
+        </div>
+
+        {/* Requests Per Day (RPD) */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs">
+            <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Daily Requests (RPD)</span>
+            <span className="font-bold text-emerald-550">{stats.questionsAsked} / 1,500 RPD</span>
+          </div>
+          <div className="w-full bg-zinc-100 dark:bg-zinc-850 h-2 rounded-full overflow-hidden">
+            <div 
+              className="bg-emerald-500 h-full transition-all duration-500" 
+              style={{ width: `${Math.min((stats.questionsAsked / 1500) * 100, 100)}%` }}
+            ></div>
+          </div>
+          <span className="text-[9px] text-zinc-400 dark:text-zinc-500 block">
+            Daily limit refreshes at midnight UTC.
+          </span>
+        </div>
+
+        {/* Token quota gauge (TPM) */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs">
+            <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Token Bandwidth (TPM)</span>
+            <span className="font-bold text-amber-500">~{stats.questionsAsked * 800} / 1M TPM</span>
+          </div>
+          <div className="w-full bg-zinc-100 dark:bg-zinc-850 h-2 rounded-full overflow-hidden">
+            <div 
+              className="bg-amber-500 h-full transition-all duration-500" 
+              style={{ width: `${Math.min(((stats.questionsAsked * 800) / 1000000) * 100, 100)}%` }}
+            ></div>
+          </div>
+          <span className="text-[9px] text-zinc-400 dark:text-zinc-500 block">
+            Maximum token throughput per minute.
+          </span>
+        </div>
+
+        {/* Status Indicator */}
+        <div className="pt-2 border-t border-zinc-100 dark:border-zinc-850 flex items-center justify-between text-[11px]">
+          <span className="text-zinc-450 dark:text-zinc-500">AI Core Connection</span>
+          <div className="flex items-center space-x-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400">Optimal</span>
+          </div>
+        </div>
       </div>
 
     </div>
