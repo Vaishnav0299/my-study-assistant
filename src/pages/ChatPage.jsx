@@ -56,6 +56,8 @@ export default function ChatPage() {
     setSelectedModel
   } = useStudy();
 
+  const limits = MODEL_LIMITS[selectedModel] || MODEL_LIMITS['gemini-2.5-flash'];
+
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
