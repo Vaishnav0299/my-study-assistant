@@ -10,3 +10,9 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
+
+# Node.js dependencies and builds
+node_modules/
+dist/
+.vscode/settings.json
+
