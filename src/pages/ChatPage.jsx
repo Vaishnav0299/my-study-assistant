@@ -10,8 +10,16 @@ import {
   Keyboard,
   ArrowRight,
   Sparkles,
-  Activity
+  Activity,
+  Settings,
+  ChevronDown
 } from 'lucide-react';
+
+const PERSONALITIES = {
+  "✨ Friendly Guide": "Breaks down concepts using simple terms and motivational check-ins.",
+  "🎓 Academic Professor": "Structures responses with headers, list points, and precise terminology.",
+  "🤔 Socratic Tutor": "Guides you to answers via hints and thought-provoking questions."
+};
 
 const QUICK_ACTIONS = [
   { label: "📘 Summarize Notes", prompt: "Summarize my notes on the following topic and list key terms: " },
@@ -23,11 +31,13 @@ const QUICK_ACTIONS = [
 export default function ChatPage() {
   const { 
     persona, 
+    setPersona,
     activeSession, 
     updateActiveSessionHistory, 
     stats, 
     setStats,
-    selectedModel
+    selectedModel,
+    setSelectedModel
   } = useStudy();
 
   const [message, setMessage] = useState('');
@@ -36,6 +46,20 @@ export default function ChatPage() {
   const [stagedDoc, setStagedDoc] = useState(null);
   const [requestTimestamps, setRequestTimestamps] = useState([]);
   const [, setTick] = useState(0);
+  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
+  const settingsRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
+        setShowSettingsDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [settingsRef]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -198,12 +222,94 @@ export default function ChatPage() {
       
       {/* Tab Header */}
       <div className="border-b border-zinc-200/60 dark:border-zinc-850 px-6 py-4 bg-zinc-50/50 dark:bg-zinc-950/20 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           <h3 className="font-semibold text-sm text-zinc-850 dark:text-zinc-250">💬 Study Workspace</h3>
-          <span className="text-zinc-300 dark:text-zinc-800 text-xs">|</span>
-          <span className="text-[11px] font-semibold text-indigo-500 bg-indigo-500/5 px-2 py-0.5 rounded-md">
-            {persona} Mode
-          </span>
+          <span className="text-zinc-350 dark:text-zinc-700 text-xs">|</span>
+          
+          {/* Study Settings Popover */}
+          <div className="relative" ref={settingsRef}>
+            <button
+              onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
+              className="text-[11px] font-semibold bg-zinc-100 hover:bg-zinc-200/80 dark:bg-zinc-900/60 dark:hover:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 rounded-lg px-2.5 py-1 flex items-center space-x-1.5 text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer select-none"
+              aria-label="Toggle Study Settings"
+            >
+              <Settings className="h-3 w-3 text-indigo-500" />
+              <span>Study Settings</span>
+              <ChevronDown className="h-3 w-3 opacity-60" />
+            </button>
+
+            {showSettingsDropdown && (
+              <div className="absolute left-0 mt-2 w-72 bg-white dark:bg-[#121217] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl p-4 z-50 space-y-4">
+                {/* Model Selection */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-zinc-450 dark:text-zinc-500 uppercase tracking-wider block">Neural Network Model</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'gemini-2.5-flash', label: '⚡ Quick', desc: 'Fast Mode' },
+                      { id: 'gemini-2.5-pro', label: '🧠 Thinking', desc: 'Deep Mode' }
+                    ].map((m) => {
+                      const active = selectedModel === m.id;
+                      return (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedModel(m.id);
+                            setShowSettingsDropdown(false);
+                          }}
+                          className={`p-2 rounded-lg border text-[11px] transition-all flex flex-col items-center justify-center text-center cursor-pointer ${
+                            active 
+                              ? 'border-indigo-500 bg-indigo-500/5 dark:bg-indigo-500/10' 
+                              : 'border-zinc-200 dark:border-zinc-800/80 bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900/40'
+                          }`}
+                          aria-label={`Select model ${m.label}`}
+                        >
+                          <span className={`font-semibold ${active ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-800 dark:text-zinc-300'}`}>
+                            {m.label}
+                          </span>
+                          <span className="text-[9px] text-zinc-400 dark:text-zinc-550">
+                            {m.desc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Persona Selection */}
+                <div className="space-y-2 pt-3 border-t border-zinc-150/10 dark:border-zinc-850">
+                  <label className="text-[10px] font-bold text-zinc-450 dark:text-zinc-500 uppercase tracking-wider block">Assistant Personality</label>
+                  <div className="flex flex-col space-y-1.5">
+                    {Object.keys(PERSONALITIES).map((pKey) => {
+                      const pDesc = PERSONALITIES[pKey];
+                      const active = persona === pKey;
+                      return (
+                        <button
+                          key={pKey}
+                          type="button"
+                          onClick={() => {
+                            setPersona(pKey);
+                            setShowSettingsDropdown(false);
+                          }}
+                          className={`p-2 text-left rounded-lg border text-[11px] transition-all cursor-pointer ${
+                            active
+                              ? 'border-indigo-500 bg-indigo-500/5 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold'
+                              : 'border-zinc-150/50 dark:border-zinc-800/80 hover:bg-zinc-50 dark:hover:bg-zinc-900/40 text-zinc-700 dark:text-zinc-300'
+                          }`}
+                          aria-label={`Select personality ${pKey}`}
+                        >
+                          <span className="block">{pKey}</span>
+                          <span className="text-[9px] text-zinc-400 dark:text-zinc-500 font-normal block leading-tight mt-0.5">
+                            {pDesc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="flex items-center space-x-3">
