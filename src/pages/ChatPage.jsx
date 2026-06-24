@@ -601,12 +601,12 @@ export default function ChatPage() {
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
             <span className="text-zinc-500 dark:text-zinc-400 font-semibold">Token Bandwidth (TPM)</span>
-            <span className="font-bold text-amber-500">~{stats.questionsAsked * 800} / 1M TPM</span>
+            <span className="font-bold text-amber-500">~{currentRPM * 1500} / 1M TPM</span>
           </div>
           <div className="w-full bg-zinc-100 dark:bg-zinc-850 h-2 rounded-full overflow-hidden">
             <div 
               className="bg-amber-500 h-full transition-all duration-500" 
-              style={{ width: `${Math.min(((stats.questionsAsked * 800) / 1000000) * 100, 100)}%` }}
+              style={{ width: `${Math.min(((currentRPM * 1500) / 1000000) * 100, 100)}%` }}
             ></div>
           </div>
           <span className="text-[9px] text-zinc-400 dark:text-zinc-500 block">
