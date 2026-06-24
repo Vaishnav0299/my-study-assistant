@@ -1,7 +1,7 @@
 ---
 # Neural Nexus - Premium AI-Powered Study Assistant
 
-Neural Nexus is a modern, high-performance study companion application featuring a React-based frontend and a FastAPI Python backend powered by the Gemini 2.5 Flash model.
+Neural Nexus is a modern, high-performance study companion application featuring a React-based frontend and a FastAPI Python backend.
 
 ---
 
@@ -13,7 +13,7 @@ Neural Nexus combines a fast asynchronous Python API with a highly responsive Re
 graph TD
     Client[React Frontend / Vite] -->|1. Request /api/chat| Server[FastAPI Backend]
     Server -->|2. Reads env| Dotenv[.env file / Secrets]
-    Server -->|3. Query + History| API[Gemini API client]
+    Server -->|3. Query + History| API
     API -->|4. Response Stream| Server
     Server -->|5. Token chunks| Client
 ```
@@ -63,10 +63,7 @@ The project relies on two independent dependency lists for the backend and front
    ```bash
    cp env.example .env
    ```
-2. Open the `.env` file and insert your Gemini API Key:
-   ```env
-   GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
-   ```
+2. Open the `.env` file and insert Api key
 
 ### 2. Run Mode: Development (Separate Servers)
 Runs both servers independently with live hot-reloading for code edits.
